@@ -12,7 +12,7 @@ class DataService {
     final response = await _supabase
         .from('categories')
         .select()
-        .order('created_at'); // default sort
+        .order('created_at', ascending: true);
 
     final List<dynamic> data = response as List<dynamic>;
     return data.map((json) => Category.fromJson(json, _currentLang)).toList();
