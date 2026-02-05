@@ -1,0 +1,246 @@
+import 'package:e_pay/models/models.dart';
+
+class MockData {
+  static const List<Category> categories = [
+    Category(id: 'games', name: 'Games', icon: 'assets/icons/gamepad.svg'),
+    Category(id: 'streaming', name: 'Streaming', icon: 'assets/icons/video.svg'),
+    Category(id: 'shopping', name: 'Shopping', icon: 'assets/icons/shopping-bag.svg'),
+  ];
+
+  static const List<Product> products = [
+    // Games
+    Product(
+      id: 'freefire',
+      name: 'Free Fire',
+      imageUrl: 'https://play-lh.googleusercontent.com/yKFWF35f5cuxyq0308-r7vLp5kigbQj7X2kXisbswhZqwbXqJg4vI9Yd0a1Y0j-0wA=w240-h480-rw',
+      categoryId: 'games',
+      description: 'Get Diamonds for Free Fire instantly.',
+      rating: 4.8,
+      offers: [
+        Offer(id: 'ff100', name: '100 Diamonds', price: 4.5),
+        Offer(id: 'ff310', name: '310 Diamonds', price: 13.5),
+        Offer(id: 'ff520', name: '520 Diamonds', price: 22.0),
+        Offer(id: 'ff1060', name: '1060 Diamonds', price: 45.0),
+      ],
+    ),
+    Product(
+      id: 'pubg',
+      name: 'PUBG Mobile',
+      imageUrl: 'https://play-lh.googleusercontent.com/JRd05pyBH41qjgsJuWduRJpDeZG0Hnb0yjf2nWqO7VaGKL10-G5UIygxED-WNOc3pg=w240-h480-rw',
+      categoryId: 'games',
+      description: 'Buy UC for PUBG Mobile.',
+      rating: 4.7,
+      offers: [
+        Offer(id: 'pubg60', name: '60 UC', price: 3.5),
+        Offer(id: 'pubg325', name: '325 UC', price: 16.0),
+        Offer(id: 'pubg660', name: '660 UC', price: 32.0),
+        Offer(id: 'pubg1800', name: '1800 UC', price: 85.0),
+      ],
+    ),
+    Product(
+      id: 'mobilelegends',
+      name: 'Mobile Legends',
+      imageUrl: 'https://play-lh.googleusercontent.com/JoNUHhHLu9vLEhFJ5JvdFMhPvL8xqXqyqHvLkLPLvLPLvLPLvLPLvLPLvLPLvLPLvL=w240-h480-rw',
+      categoryId: 'games',
+      description: 'Top up Diamonds for Mobile Legends: Bang Bang.',
+      rating: 4.6,
+      offers: [
+        Offer(id: 'ml86', name: '86 Diamonds', price: 5.0),
+        Offer(id: 'ml172', name: '172 Diamonds', price: 10.0),
+        Offer(id: 'ml344', name: '344 Diamonds', price: 20.0),
+        Offer(id: 'ml706', name: '706 Diamonds', price: 40.0),
+      ],
+    ),
+    Product(
+      id: 'codm',
+      name: 'Call of Duty Mobile',
+      imageUrl: 'https://play-lh.googleusercontent.com/38AGKCqmbjZ9OuWx4YjssAz3Y0DTWbiM5HB0ove1pNBq_o0R6yPCNiHjCMCLEYwnSA=w240-h480-rw',
+      categoryId: 'games',
+      description: 'Get CP (COD Points) for Call of Duty Mobile.',
+      rating: 4.5,
+      offers: [
+        Offer(id: 'cod80', name: '80 CP', price: 4.0),
+        Offer(id: 'cod400', name: '400 CP', price: 18.0),
+        Offer(id: 'cod800', name: '800 CP', price: 35.0),
+        Offer(id: 'cod2000', name: '2000 CP', price: 85.0),
+      ],
+    ),
+    Product(
+      id: 'genshin',
+      name: 'Genshin Impact',
+      imageUrl: 'https://play-lh.googleusercontent.com/e66XMuvW5hZ7HnFf8R_lcA3TFgkxm0SuyaMsBs3KENijNHZlogUAjxeu9COqsejV5w=w240-h480-rw',
+      categoryId: 'games',
+      description: 'Purchase Genesis Crystals for Genshin Impact.',
+      rating: 4.9,
+      offers: [
+        Offer(id: 'gen60', name: '60 Genesis Crystals', price: 5.0),
+        Offer(id: 'gen300', name: '300 Genesis Crystals', price: 25.0),
+        Offer(id: 'gen980', name: '980 Genesis Crystals', price: 50.0),
+        Offer(id: 'gen1980', name: '1980 Genesis Crystals', price: 100.0),
+      ],
+    ),
+    Product(
+      id: 'roblox',
+      name: 'Roblox',
+      imageUrl: 'https://play-lh.googleusercontent.com/WNWZaxi9RdJKe2GQM3vqXIAkk69mnIl4Cc8EyZcir2SKlVOxeUv9tZGfNTmNaLC717Ht=w240-h480-rw',
+      categoryId: 'games',
+      description: 'Buy Robux for Roblox.',
+      rating: 4.7,
+      offers: [
+        Offer(id: 'rbx400', name: '400 Robux', price: 20.0),
+        Offer(id: 'rbx800', name: '800 Robux', price: 40.0),
+        Offer(id: 'rbx1700', name: '1700 Robux', price: 80.0),
+        Offer(id: 'rbx4500', name: '4500 Robux', price: 200.0),
+      ],
+    ),
+    Product(
+      id: 'clashofclans',
+      name: 'Clash of Clans',
+      imageUrl: 'https://play-lh.googleusercontent.com/LByrur1gelRWLGlWFbHqCTCTfLrL6eRUYs5vBvXqXmwTbQ3xQjQqXqXqXqXqXqXqXqXq=w240-h480-rw',
+      categoryId: 'games',
+      description: 'Get Gems for Clash of Clans.',
+      rating: 4.8,
+      offers: [
+        Offer(id: 'coc500', name: '500 Gems', price: 22.0),
+        Offer(id: 'coc1200', name: '1200 Gems', price: 45.0),
+        Offer(id: 'coc2500', name: '2500 Gems', price: 90.0),
+        Offer(id: 'coc6500', name: '6500 Gems', price: 220.0),
+      ],
+    ),
+    Product(
+      id: 'clashroyale',
+      name: 'Clash Royale',
+      imageUrl: 'https://play-lh.googleusercontent.com/LVYCHJmFdNyFgMGcwPLZnLXqJLqYqLqYqLqYqLqYqLqYqLqYqLqYqLqYqLqYqLqY=w240-h480-rw',
+      categoryId: 'games',
+      description: 'Purchase Gems for Clash Royale.',
+      rating: 4.6,
+      offers: [
+        Offer(id: 'cr500', name: '500 Gems', price: 22.0),
+        Offer(id: 'cr1200', name: '1200 Gems', price: 45.0),
+        Offer(id: 'cr2500', name: '2500 Gems', price: 90.0),
+        Offer(id: 'cr6500', name: '6500 Gems', price: 220.0),
+      ],
+    ),
+    Product(
+      id: 'brawlstars',
+      name: 'Brawl Stars',
+      imageUrl: 'https://play-lh.googleusercontent.com/2u-R0-F6qLqLqLqLqLqLqLqLqLqLqLqLqLqLqLqLqLqLqLqLqLqLqLqLqLqLqLqL=w240-h480-rw',
+      categoryId: 'games',
+      description: 'Get Gems for Brawl Stars.',
+      rating: 4.7,
+      offers: [
+        Offer(id: 'bs30', name: '30 Gems', price: 10.0),
+        Offer(id: 'bs80', name: '80 Gems', price: 22.0),
+        Offer(id: 'bs170', name: '170 Gems', price: 45.0),
+        Offer(id: 'bs360', name: '360 Gems', price: 90.0),
+      ],
+    ),
+    Product(
+      id: 'minecraft',
+      name: 'Minecraft',
+      imageUrl: 'https://play-lh.googleusercontent.com/VSwHQjcAttxsLE47RuS4PqpC4LT7lCoSjE7Hx5AW_yCxtDvcnsHHvm5CTuL5BPN-uRTP=w240-h480-rw',
+      categoryId: 'games',
+      description: 'Buy Minecoins for Minecraft.',
+      rating: 4.8,
+      offers: [
+        Offer(id: 'mc320', name: '320 Minecoins', price: 10.0),
+        Offer(id: 'mc1020', name: '1020 Minecoins', price: 30.0),
+        Offer(id: 'mc3500', name: '3500 Minecoins', price: 100.0),
+      ],
+    ),
+    Product(
+      id: 'fortnite',
+      name: 'Fortnite',
+      imageUrl: 'https://cdn2.unrealengine.com/14br-consoles-1920x1080-wlogo-1920x1080-658423830.jpg',
+      categoryId: 'games',
+      description: 'Get V-Bucks for Fortnite.',
+      rating: 4.7,
+      offers: [
+        Offer(id: 'fn1000', name: '1000 V-Bucks', price: 40.0),
+        Offer(id: 'fn2800', name: '2800 V-Bucks', price: 100.0),
+        Offer(id: 'fn5000', name: '5000 V-Bucks', price: 160.0),
+        Offer(id: 'fn13500', name: '13500 V-Bucks', price: 400.0),
+      ],
+    ),
+    Product(
+      id: 'wildrift',
+      name: 'Wild Rift',
+      imageUrl: 'https://play-lh.googleusercontent.com/DwQZJRkMCF5BNQQ5BNQQ5BNQQ5BNQQ5BNQQ5BNQQ5BNQQ5BNQQ5BNQQ5BNQQ5BNQ=w240-h480-rw',
+      categoryId: 'games',
+      description: 'Purchase Wild Cores for League of Legends: Wild Rift.',
+      rating: 4.6,
+      offers: [
+        Offer(id: 'wr420', name: '420 Wild Cores', price: 22.0),
+        Offer(id: 'wr875', name: '875 Wild Cores', price: 45.0),
+        Offer(id: 'wr1850', name: '1850 Wild Cores', price: 90.0),
+        Offer(id: 'wr3900', name: '3900 Wild Cores', price: 180.0),
+      ],
+    ),
+    Product(
+      id: 'candycrush',
+      name: 'Candy Crush',
+      imageUrl: 'https://play-lh.googleusercontent.com/0SdQjJN_QqQqQqQqQqQqQqQqQqQqQqQqQqQqQqQqQqQqQqQqQqQqQqQqQqQqQqQq=w240-h480-rw',
+      categoryId: 'games',
+      description: 'Buy Gold Bars for Candy Crush Saga.',
+      rating: 4.5,
+      offers: [
+        Offer(id: 'cc10', name: '10 Gold Bars', price: 5.0),
+        Offer(id: 'cc50', name: '50 Gold Bars', price: 20.0),
+        Offer(id: 'cc140', name: '140 Gold Bars', price: 50.0),
+      ],
+    ),
+    Product(
+      id: 'amongus',
+      name: 'Among Us',
+      imageUrl: 'https://play-lh.googleusercontent.com/8ddL1kuoNUB5vUvgDVjYY5WUGQ5WUGQ5WUGQ5WUGQ5WUGQ5WUGQ5WUGQ5WUGQ5WUG=w240-h480-rw',
+      categoryId: 'games',
+      description: 'Get Stars and Cosmetics for Among Us.',
+      rating: 4.4,
+      offers: [
+        Offer(id: 'au100', name: '100 Stars', price: 5.0),
+        Offer(id: 'au475', name: '475 Stars', price: 20.0),
+        Offer(id: 'au1250', name: '1250 Stars', price: 50.0),
+      ],
+    ),
+    
+    // Streaming
+    Product(
+      id: 'netflix',
+      name: 'Netflix',
+      imageUrl: 'https://images.ctfassets.net/y2ske730sjqp/1aONibCke6niZhgPxuiilC/2a40246a8917e301d27f05735c234275/BrandAssets_Logos_01-Wordmark.jpg?w=458&h=257&q=50&fm=png',
+      categoryId: 'streaming',
+      description: 'Subscribe to Netflix Premium.',
+      rating: 4.9,
+      offers: [
+        Offer(id: 'netflix1m', name: '1 Month Premium', price: 25.0),
+        Offer(id: 'netflix3m', name: '3 Months Premium', price: 70.0),
+      ],
+    ),
+    
+    // Shopping
+    Product(
+      id: 'aliexpress',
+      name: 'AliExpress',
+      imageUrl: 'https://upload.wikimedia.org/wikipedia/en/thumb/7/75/AliExpress_logo.svg/1200px-AliExpress_logo.svg.png',
+      categoryId: 'shopping',
+      description: 'Shop global products.',
+      rating: 4.5,
+      offers: [
+        Offer(id: 'ali10', name: '\$10 Gift Card', price: 32.0),
+        Offer(id: 'ali25', name: '\$25 Gift Card', price: 80.0),
+      ],
+    ),
+    Product(
+      id: 'apple',
+      name: 'Apple Gift Card',
+      imageUrl: 'https://store.storeimages.cdn-apple.com/4982/as-images.apple.com/is/gift-card-unselect-202010?wid=200&hei=200&fmt=jpeg&qlt=95&.v=1602181515000',
+      categoryId: 'shopping',
+      description: 'Get apps, games, music, movies, TV shows, and more.',
+      rating: 4.9,
+      offers: [
+        Offer(id: 'apple10', name: '\$10 Gift Card', price: 35.0),
+        Offer(id: 'apple50', name: '\$50 Gift Card', price: 175.0),
+      ],
+    ),
+  ];
+}
