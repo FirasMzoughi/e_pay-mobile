@@ -132,7 +132,10 @@ class ProductDetailsScreen extends StatelessWidget {
           context: context,
           backgroundColor: Colors.transparent,
           isScrollControlled: true,
-          builder: (context) => const PaymentBottomSheet(),
+          builder: (context) => PaymentBottomSheet(
+            product: product,
+            offer: offer,
+          ),
         );
       },
       child: Container(

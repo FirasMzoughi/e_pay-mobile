@@ -7,6 +7,8 @@ import 'package:e_pay/l10n/app_localizations.dart';
 import 'package:e_pay/services/theme_service.dart';
 
 import 'package:e_pay/utils/supabase_utils.dart';
+import 'package:e_pay/screens/home_screen.dart';
+import 'package:supabase_flutter/supabase_flutter.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -46,7 +48,9 @@ class EPayApp extends StatelessWidget {
                  GlobalWidgetsLocalizations.delegate,
                  GlobalCupertinoLocalizations.delegate,
               ],
-              home: const OnboardingScreen(),
+              home: Supabase.instance.client.auth.currentUser != null 
+                  ? const HomeScreen() 
+                  : const OnboardingScreen(),
             );
           },
         );

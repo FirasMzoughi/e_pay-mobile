@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:e_pay/utils/constants.dart';
 import 'package:e_pay/models/models.dart';
 import 'package:e_pay/screens/product_details_screen.dart';
+import 'package:e_pay/screens/onboarding_screen.dart';
+import 'package:e_pay/screens/chat_screen.dart';
 import 'package:e_pay/l10n/app_localizations.dart';
 import 'package:e_pay/widgets/language_selector.dart';
 import 'package:e_pay/widgets/theme_toggle.dart';
@@ -43,13 +45,22 @@ class _HomeScreenState extends State<HomeScreen> {
 
   void _loadData() {
     _categoriesFuture = _dataService.getCategories();
-    _productsFuture = _dataService.getProducts(categoryId: _selectedCategoryId); // Initial load all or none? Usually all.
+    _productsFuture = _dataService.getProducts(categoryId: _selectedCategoryId);
   }
 
   void _refreshData() {
     setState(() {
       _loadData();
     });
+  }
+
+  Future<void> _handleRefresh() async {
+    _refreshData();
+    try {
+      await Future.wait([_categoriesFuture, _productsFuture]);
+    } catch (e) {
+      // Ignore errors during refresh as UI will show them
+    }
   }
 
   void _onCategorySelected(String? categoryId) {
@@ -82,120 +93,177 @@ class _HomeScreenState extends State<HomeScreen> {
           ),
         ),
         child: SafeArea(
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              // Header with Logo
-              Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 24.0, vertical: 16.0),
-                child: Row(
-                  children: [
-                    // Logo Image
-                    Image.asset('assets/logo.png', height: 40), 
-                    const Gap(12),
-                    Expanded(
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Text(
-                            "${loc.translate('hello_user')} ${userName.split(' ')[0]}", 
-                            style: Theme.of(context).textTheme.bodyLarge?.copyWith(
-                              color: isDark ? AppColors.textGrayLight : AppColors.textGray,
+          child: RefreshIndicator(
+            onRefresh: _handleRefresh,
+            color: AppColors.accent,
+            child: CustomScrollView(
+              slivers: [
+                // 1. Header with Logo
+                SliverToBoxAdapter(
+                  child: Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 24.0, vertical: 16.0),
+                    child: Row(
+                      children: [
+                        // Logo Image
+                        Image.asset('assets/logo.png', height: 40), 
+                        const Gap(12),
+                        Expanded(
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Text(
+                                "${loc.translate('hello_user')} ${userName.split(' ')[0]}", 
+                                style: Theme.of(context).textTheme.bodyLarge?.copyWith(
+                                  color: isDark ? AppColors.textGrayLight : AppColors.textGray,
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                        const ThemeToggle(),
+                        const Gap(8),
+                        const LanguageSelector(compact: true),
+                        const Gap(12),
+                        // Avatar with Menu
+                        PopupMenuButton<String>(
+                          onSelected: (value) async {
+                            if (value == 'logout') {
+                              await AuthService().signOut();
+                              if (context.mounted) {
+                                Navigator.of(context).pushAndRemoveUntil(
+                                  MaterialPageRoute(builder: (_) => const OnboardingScreen()),
+                                  (route) => false,
+                                );
+                              }
+                            }
+                          },
+                          itemBuilder: (BuildContext context) => <PopupMenuEntry<String>>[
+                             
+                            PopupMenuItem<String>(
+                              value: 'logout',
+                              child: Row(
+                                children: const [
+                                  Icon(Icons.logout, color: Colors.red),
+                                  Gap(8),
+                                  Text('Logout', style: TextStyle(color: Colors.red)),
+                                ],
+                              ),
+                            ),
+                          ],
+                          child: Container(
+                            height: 40,
+                            width: 40,
+                            decoration: BoxDecoration(
+                              shape: BoxShape.circle,
+                              border: Border.all(color: AppColors.accent, width: 2),
+                            ),
+                            child: ClipOval(
+                              child: userAvatar != null 
+                                ? Image.network(userAvatar, fit: BoxFit.cover) 
+                                : const Icon(Icons.person),
                             ),
                           ),
-                        ],
-                      ),
+                        ),
+                      ],
                     ),
-                    const ThemeToggle(),
-                    const Gap(8),
-                    const LanguageSelector(compact: true),
-                    const Gap(12),
-                    // Avatar
-                    Container(
-                      height: 40,
-                      width: 40,
-                      decoration: BoxDecoration(
-                        shape: BoxShape.circle,
-                        border: Border.all(color: AppColors.accent, width: 2),
-                      ),
-                      child: ClipOval(
-                        child: userAvatar != null 
-                          ? Image.network(userAvatar, fit: BoxFit.cover) 
-                          : const Icon(Icons.person),
-                      ),
-                    ),
-                  ],
+                  ),
                 ),
-              ),
-              
-              const Gap(16),
+                
+                const SliverToBoxAdapter(child: Gap(16)),
 
-              // Categories FutureBuilder
-              SizedBox(
-                height: 50,
-                child: FutureBuilder<List<Category>>(
-                  future: _categoriesFuture,
-                  builder: (context, snapshot) {
-                     // Add "All" option manually
-                    final allCategory = Category(id: 'all', name: loc.translate('cat_all'), icon: '🔥');
-                    var categories = [allCategory];
-                    
-                    if (snapshot.hasData) {
-                      categories.addAll(snapshot.data!);
-                    }
+                // 2. Categories Horizontal List
+                SliverToBoxAdapter(
+                  child: SizedBox(
+                    height: 50,
+                    child: FutureBuilder<List<Category>>(
+                      future: _categoriesFuture,
+                      builder: (context, snapshot) {
+                         // Add "All" option manually
+                        final allCategory = Category(id: 'all', name: loc.translate('cat_all'), icon: '🔥');
+                        var categories = [allCategory];
+                        
+                        if (snapshot.hasData) {
+                          categories.addAll(snapshot.data!);
+                        }
 
-                    return ListView.builder(
-                      scrollDirection: Axis.horizontal,
-                      padding: const EdgeInsets.symmetric(horizontal: 24),
-                      itemCount: categories.length,
-                      itemBuilder: (context, index) {
-                         final cat = categories[index];
-                         return _buildCategoryPill(cat.name, cat.id, icon: cat.icon);
+                        return ListView.builder(
+                          scrollDirection: Axis.horizontal,
+                          padding: const EdgeInsets.symmetric(horizontal: 24),
+                          itemCount: categories.length,
+                          itemBuilder: (context, index) {
+                             final cat = categories[index];
+                             return _buildCategoryPill(cat.name, cat.id, icon: cat.icon);
+                          },
+                        );
                       },
-                    );
-                  },
+                    ),
+                  ),
                 ),
-              ),
 
-              const Gap(24),
+                const SliverToBoxAdapter(child: Gap(24)),
 
-              // Products FutureBuilder
-              Expanded(
-                child: FutureBuilder<List<Product>>(
+                // 3. Products Grid (Sliver)
+                FutureBuilder<List<Product>>(
                   future: _productsFuture,
                   builder: (context, snapshot) {
                     if (snapshot.connectionState == ConnectionState.waiting) {
-                      return const Center(child: CircularProgressIndicator());
+                      return const SliverToBoxAdapter(
+                        child: Center(child: Padding(
+                          padding: EdgeInsets.all(20.0),
+                          child: CircularProgressIndicator(),
+                        )),
+                      );
                     }
                     if (snapshot.hasError) {
-                      return Center(child: Text("Error: ${snapshot.error}"));
+                      return SliverToBoxAdapter(
+                        child: Center(child: Text("Error: ${snapshot.error}")),
+                      );
                     }
                     
                     final products = snapshot.data ?? [];
                     if (products.isEmpty) {
-                      return const Center(child: Text("No products found"));
+                      return const SliverFillRemaining(
+                        child: Center(child: Text("No products found")),
+                      );
                     }
 
-                    return GridView.builder(
+                    return SliverPadding(
                       padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 8),
-                      gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-                        crossAxisCount: 2,
-                        childAspectRatio: 0.75,
-                        crossAxisSpacing: 16,
-                        mainAxisSpacing: 16,
+                      sliver: SliverGrid(
+                        gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                          crossAxisCount: 2,
+                          childAspectRatio: 0.75,
+                          crossAxisSpacing: 16,
+                          mainAxisSpacing: 16,
+                        ),
+                        delegate: SliverChildBuilderDelegate(
+                          (context, index) {
+                            final product = products[index];
+                            return _buildProductCard(product, isDark);
+                          },
+                          childCount: products.length,
+                        ),
                       ),
-                      itemCount: products.length,
-                      itemBuilder: (context, index) {
-                        final product = products[index];
-                        return _buildProductCard(product, isDark);
-                      },
                     );
                   },
                 ),
-              ),
-            ],
+                
+                // Bottom padding
+                const SliverToBoxAdapter(child: Gap(80)),
+              ],
+            ),
           ),
         ),
+      ),
+      floatingActionButton: FloatingActionButton(
+        onPressed: () {
+          Navigator.push(
+            context, 
+            MaterialPageRoute(builder: (_) => const ChatScreen(paymentMethod: 'Support'))
+          );
+        },
+        backgroundColor: AppColors.accent,
+        child: const Icon(Icons.chat_bubble_outline, color: Colors.white),
       ),
     );
   }

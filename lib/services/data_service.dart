@@ -29,7 +29,7 @@ class DataService {
     }
     
     // Order by creation for consistent list
-    query = query.order('created_at', ascending: false);
+    query = query.order('created_at', ascending: true);
 
     final response = await query;
     final List<dynamic> data = response as List<dynamic>;

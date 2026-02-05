@@ -18,7 +18,7 @@ class AppLocalizations {
       'onboarding_title_2': 'كل ألعابك في مكان واحد',
       'onboarding_desc_2': 'احصل على جواهر ورصيد واشتراكات لـ Free Fire و PUBG والمزيد.',
       'onboarding_title_3': 'تجربة مميزة',
-      'onboarding_desc_3': 'استمتع بواجهة زجاجية سلسة مصممة خصيصًا لك.',
+      'onboarding_desc_3': 'استنتع بافضل تطبيق شحن في تونس',
       'get_started': 'ابدأ الآن',
       'next': 'التالي',
       'hello_user': 'مرحبًا',

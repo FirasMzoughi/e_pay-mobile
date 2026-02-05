@@ -2,11 +2,19 @@ import 'package:flutter/material.dart';
 import 'package:e_pay/utils/constants.dart';
 import 'package:e_pay/screens/chat_screen.dart';
 import 'package:e_pay/services/data_service.dart';
+import 'package:e_pay/services/transaction_service.dart';
 import 'package:e_pay/models/models.dart';
 import 'package:gap/gap.dart';
 
 class PaymentBottomSheet extends StatefulWidget {
-  const PaymentBottomSheet({Key? key}) : super(key: key);
+  final Product product;
+  final Offer offer;
+
+  const PaymentBottomSheet({
+    Key? key,
+    required this.product,
+    required this.offer,
+  }) : super(key: key);
 
   @override
   State<PaymentBottomSheet> createState() => _PaymentBottomSheetState();
@@ -14,7 +22,9 @@ class PaymentBottomSheet extends StatefulWidget {
 
 class _PaymentBottomSheetState extends State<PaymentBottomSheet> {
   final DataService _dataService = DataService();
+  final TransactionService _transactionService = TransactionService();
   late Future<List<PaymentMethod>> _paymentMethodsFuture;
+  bool _isLoading = false;
 
   @override
   void initState() {
@@ -38,7 +48,7 @@ class _PaymentBottomSheetState extends State<PaymentBottomSheet> {
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
               Text(
-                "Select Payment Method", // Could be localized
+                "Select Payment Method",
                 style: Theme.of(context).textTheme.titleLarge?.copyWith(
                   fontWeight: FontWeight.bold,
                 ),
@@ -51,41 +61,41 @@ class _PaymentBottomSheetState extends State<PaymentBottomSheet> {
           ),
           const Gap(24),
           
-          FutureBuilder<List<PaymentMethod>>(
-            future: _paymentMethodsFuture,
-            builder: (context, snapshot) {
-              if (snapshot.connectionState == ConnectionState.waiting) {
-                return const Center(child: CircularProgressIndicator());
-              }
-              if (snapshot.hasError) {
-                return Center(child: Text("Error: ${snapshot.error}"));
-              }
-              if (!snapshot.hasData || snapshot.data!.isEmpty) {
-                return const Center(child: Text("No payment methods available"));
-              }
+          if (_isLoading)
+             const Center(child: CircularProgressIndicator())
+          else
+            FutureBuilder<List<PaymentMethod>>(
+              future: _paymentMethodsFuture,
+              builder: (context, snapshot) {
+                if (snapshot.connectionState == ConnectionState.waiting) {
+                  return const Center(child: CircularProgressIndicator());
+                }
+                if (snapshot.hasError) {
+                  return Center(child: Text("Error: ${snapshot.error}"));
+                }
+                if (!snapshot.hasData || snapshot.data!.isEmpty) {
+                  return const Center(child: Text("No payment methods available"));
+                }
 
-              final methods = snapshot.data!;
-              
-              return ListView.separated(
-                shrinkWrap: true, // Important for BottomSheet
-                itemCount: methods.length,
-                separatorBuilder: (context, index) => const Gap(16),
-                itemBuilder: (context, index) {
-                  final method = methods[index];
-                  // Use a default icon or map based on name if image is URL
-                  // For now assuming image URL is available or we use a placeholder icon
-                  return _buildPaymentOption(
-                    context,
-                    name: method.name,
-                    // Use network image if imageUrl is present, else default icon
-                    imageUrl: method.imageUrl,
-                    color: Colors.blueAccent, // Default color for dynamic items
-                    onTap: () => _navigateToChat(context, method.name),
-                  );
-                },
-              );
-            },
-          ),
+                final methods = snapshot.data!;
+                
+                return ListView.separated(
+                  shrinkWrap: true,
+                  itemCount: methods.length,
+                  separatorBuilder: (context, index) => const Gap(16),
+                  itemBuilder: (context, index) {
+                    final method = methods[index];
+                    return _buildPaymentOption(
+                      context,
+                      name: method.name,
+                      imageUrl: method.imageUrl,
+                      color: Colors.blueAccent,
+                      onTap: () => _handlePaymentSelection(context, method.name),
+                    );
+                  },
+                );
+              },
+            ),
           
           const Gap(40),
         ],
@@ -127,13 +137,49 @@ class _PaymentBottomSheetState extends State<PaymentBottomSheet> {
     );
   }
 
-  void _navigateToChat(BuildContext context, String method) {
-    Navigator.pop(context); // Close sheet
-    Navigator.push(
-      context,
-      MaterialPageRoute(
-        builder: (_) => ChatScreen(paymentMethod: method),
-      ),
-    );
+  Future<void> _handlePaymentSelection(BuildContext context, String method) async {
+    print("DEBUG: Starting payment selection for $method");
+    setState(() => _isLoading = true);
+    
+    // Capture the navigator BEFORE the async call
+    final navigator = Navigator.of(context);
+
+    try {
+      // 1. Create Transaction
+      print("DEBUG: Creating transaction...");
+      final transaction = await _transactionService.createTransaction(
+        productName: widget.product.name,
+        offerName: widget.offer.name,
+        price: widget.offer.price,
+        paymentMethod: method,
+      );
+      print("DEBUG: Transaction created: $transaction");
+
+      // 2. Navigate to Chat using captured navigator
+      print("DEBUG: Navigating to chat...");
+      
+      // Close bottom sheet
+      navigator.pop(); 
+      
+      // Navigate to Chat
+      await navigator.push(
+        MaterialPageRoute(
+          builder: (_) => ChatScreen(
+            paymentMethod: method,
+            transactionDetails: transaction,
+          ),
+        ),
+      );
+      print("DEBUG: Navigation complete");
+
+    } catch (e) {
+      print("DEBUG: Error in _handlePaymentSelection: $e");
+      if (mounted) {
+        setState(() => _isLoading = false);
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text("Failed: $e")),
+        );
+      }
+    }
   }
 }
